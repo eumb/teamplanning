@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" >
+<head>
+   
+    <link href='css/fullcalendar.css' rel='stylesheet' />
+    <link rel="stylesheet" type="text/css" href="css/xr_main.css"/>
+    <link rel="stylesheet" type="text/css" href="css/xr_text.css"/>
+    <link href='css/page.css' rel='stylesheet' />
+    <link rel="stylesheet" href="jqwidgets/styles/jqx.base.css" type="text/css" />
+    <link rel="stylesheet" href="jqwidgets/styles/jqx.classic.css" type="text/css" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="css/page.css" rel="stylesheet" type="text/css"/>
+
+    <script src='js/jquery.min.js'></script>
+    <script src='js/fullcalendar.min.js'></script>
+    <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxdata.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxdropdownlist.js"></script>
+    <script language="javascript"  src="js/jquery.bpopup.min.js"></script>
+    <script language="javascript"  src="js/jquery.bpopup.js"></script>
+    <script type="text/javascript" src="js/style.js"></script>
+
+ <!--Slider-->
+    <script src="js/jquery-ui.custom.min.js"></script>
+    <script src="js/jQAllRangeSliders-min.js"></script>
+
+
+<!--Foundation-->
+
+ <link rel="stylesheet" href="css/foundation.css">
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="utf-8">
+
+  <script src="js/vendor/modernizr.js"></script>
+  
+  <script src="js/foundation.min.js"></script>
+
+
+</head>
+<body>
+
+<!--Slider-->
+<script>
+    
+     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  $("#slider").dateRangeSlider({
+    bounds: {min: new Date(2012, 0, 1), max: new Date(2012, 11, 31, 12, 59, 59)},
+    defaultValues: {min: new Date(2012, 1, 10), max: new Date(2012, 4, 22)},
+    scales: [{
+      first: function(value){ return value; },
+      end: function(value) {return value; },
+      next: function(value){
+        var next = new Date(value);
+        return new Date(next.setMonth(value.getMonth() + 1));
+      },
+      label: function(value){
+        return months[value.getMonth()];
+      },
+      format: function(tickContainer, tickStart, tickEnd){
+        tickContainer.addClass("myCustomClass");
+      }
+    }]
+  });
+
+
+    
+    </script>
+
+<!--Dropdownlist-->
+<script type="text/javascript">
+
+        $(document).ready(function () {
+            // prepare the data
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'Users' }
+
+                ],
+                url: 'getusers.php'
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            $("#dropdownlist").jqxDropDownList(
+                    {
+                        source: dataAdapter,
+                        theme: 'classic',
+                        width: 200,
+                        height: 25,
+                        selectedIndex: 0,
+                        displayMember: 'Users'
+
+                    });
+
+            $("#dropdownlist").on('select', function (event) {
+                if (event.args) {
+                    var item = event.args.item;
+                    if (item) {
+
+                        var labelelement = $("<div></div>");
+                        labelelement.text(item.label);
+                        $("#selectionlog").children().remove();
+                        $("#selectionlog").append(labelelement);
+
+                    }
+                }
+            });
+        });
+
+</script>
+
+
+
+
+
+<!--Calendar-->
+
+<script>
+    
+    $(document).ready(function() {
+
+        var isResizingEvent = false;
+        var date = new Date();
+        var d = date.getDate();
+        var m = date.getMonth();
+        var y = date.getFullYear();
+
+        var calendar = $('#calendar').fullCalendar({
+            eventResizeStart: function () { isResizingEvent = true; },
+            eventResizeStop: function () { isResizingEvent = false; },
+            editable: true,
+            firstDay:1,
+            aspectRatio: 2,
+            header: {
+                left: 'prev,next today',
+                center: 'title'
+                //right: 'month,agendaWeek,agendaDay'
+            },
+          
+            events: "events.php",
+
+            // Convert the allDay from string to boolean
+            eventRender: function(event, element, view) {
+                if (event.allDay === 'true') {  
+                    event.allDay = true;
+                } else {
+                    event.allDay = false;
+                }
+            },
+            selectable: true,
+            selectHelper: true,
+            
+
+
+            //ADdding events
+
+            select: function(start, end, allDay) {
+                //var title = prompt('Event Title:');
+                //var url = prompt('Type Event url, if exits:');
+                var start = $.fullCalendar.formatDate(start, "yyyy-MM-dd HH:mm:ss");
+                var end = $.fullCalendar.formatDate(end, "yyyy-MM-dd HH:mm:ss");
+                //$("#popup").show();
+
+                $('#popup_add').bPopup({
+                    modalClose: true,
+                    escClose: true,
+                    opacity: 0.4,
+                    positionStyle: 'fixed' //'fixed' or 'absolute'
+                });
+
+                $("#eventName").focus();
+                $("#submit").click(function()
+                {
+                    var title = $("#selectionlog").text();
+
+                    if($('#checkbox_id').prop('checked'))
+                    {
+                        //alert("Checked");
+                        var backgroundColor = "#CC0000";
+                        //console.log(backgroundColor);
+                    } else
+                    {
+                        //alert("UnChecked");
+                        var backgroundColor = "#3A87AD";
+                        //console.log(backgroundColor);
+                    }
+
+
+                    $.ajax({
+                        url: 'add_events.php',
+                        data: 'title='+ title+'&start='+ start + '&end='+ end + '&backgroundColor='+ backgroundColor,
+                        type: "POST",
+                        success: function(json) {
+                            console.log(json);
+                            //alert('Added Successfully');
+                        }
+                    });
+                    //$("#popup").hide();
+
+                    $("#popup_add").bPopup().close(),
+                    calendar.fullCalendar('renderEvent',
+                            {
+                                title: title,
+                                start: start,
+                                end: end,
+                                allDay: allDay
+                            },
+                            true // make the event "stick"
+                    );
+
+                    calendar.fullCalendar('unselect');
+               $("#popup_add").bPopup().close()
+                });
+
+                $("#submit").click(function(){
+                    // clear all info, unselect events and...
+                    $("#popup_add").bPopup().close();
+                });
+            },
+
+            eventDrop: function(event, delta) {
+                var start = $.fullCalendar.formatDate(event.start, "yyyy-MM-dd HH:mm:ss");
+                var end = $.fullCalendar.formatDate(event.end, "yyyy-MM-dd HH:mm:ss");
+                $.ajax({
+                    url: 'update_events.php',
+                    data: 'title='+ event.title+'&start='+ start +'&end='+ end +'&id='+ event.id ,
+                    type: "POST",
+                    success: function(json) {
+                        //alert("Updated Successfully");
+                    }
+                });
+            },
+            eventResize: function(event) {
+                var start = $.fullCalendar.formatDate(event.start, "yyyy-MM-dd HH:mm:ss");
+                var end = $.fullCalendar.formatDate(event.end, "yyyy-MM-dd HH:mm:ss");
+                $.ajax({
+                    url: 'update_events.php',
+                    data: 'title='+ event.title+'&start='+ start +'&end='+ end +'&id='+ event.id ,
+                    type: "POST",
+                    success: function(json) {
+                        //alert("Updated Successfully");
+                    }
+                });
+
+            },
+
+
+
+            eventClick: function(event) {
+                $('#popup_edit').bPopup({
+                    modalClose: true,
+                    opacity: 0.4,
+                    positionStyle: 'absolute' //'fixed' or 'absolute'
+                });
+
+                $("#approve").click(function(){
+
+                    $.ajax({
+                        type: "POST",
+                        url: "delete_events.php",
+                        data: "&id=" + event.id
+
+                    });
+                    $('#calendar').fullCalendar('removeEvents', event.id);
+                   $("#popup_edit").bPopup().close();
+
+                }),
+
+                $("#cancel").click(function(){
+                    // clear all info, unselect events and...
+                    $("#popup_edit").bPopup().close();
+                });
+            }
+        });
+
+//height resize
+/*
+$(window).resize(function() {
+            if (isResizingEvent) { return; }
+            var viewportHeight =  $(window).height()
+            var viewportWidth = $(window).width()
+            $('#calendar').fullCalendar('option', 'contentHeight',  $(window).height());
+            $('#calendar').fullCalendar('option', 'contentWidth',  $(window).width());
+        });
+*/
+});
+   
+
+</script>
+
+
+
+<div id="bg"></div>
+ 
+<nav class="top-bar" >
+    <ul class="title-area" >
+        <li class="name" ><h1>TSCc-IPP-RO Call-out Rotation</h1></li>
+     
+    </ul>
+    <section class="top-bar-section">
+        <ul class="right">
+        </ul>
+    </section>
+</nav>
+
+
+<div class="xr_ap" id="xr_xri" style="top:60px;width-min: 1350px;width: 100%; overflow:hidden;"> <!--content wraper-->
+<div class="row">
+
+<div class="large-1 columns"></div>
+
+    <div class="large-7 columns xr_ar" id="block1" style="opacity:0.8">
+
+        
+            <div id ="calendar" style="width: 100%; margin: 0 auto; font-size: 12px !important; text-align:center;"></div>
+      
+    </div>
+    <div class="large-5 columns xr_ar" id="block2" >
+            
+            <div id="slider"></div>
+          
+    </div>
+
+ <div class="large-1 columns"></div>
+</div>
+
+<div class="row">
+    <div class="large-5 columns xr_ar" id="block3" >
+            
+                <div id="slider"></div>
+          
+    </div>
+
+    <div class="large-7 columns xr_ar" id="block4" >
+            
+                <span > Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                </span><!--block 1-->
+          
+    </div>
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+    <div id="popup_add">
+        <form method="post" name="form">
+            <div id="dropdownlist"></div>
+            <div id="selectionlog"></div>
+
+
+        <div>
+            <input type="checkbox" name="checkbox_id" id="checkbox_id" value="checked"  style="position: absolute; text-align: center; left: 40px; top: 48px;"/>
+            <label for="checkbox_id"  style="position: absolute; text-align: center; left: 10px; top: 50px;">Main</label>
+        </div>
+            <div id ="submit" style="position: absolute; text-align: center; left: 120px; top: 90px;" >Submit</div>
+
+        </form>
+
+
+    </div>
+
+
+    <div id="popup_edit">
+        <form method="post" name="forma">
+            <div id>Delete entry?</div>
+            <div id ="approve" style="position: absolute; text-align: center; left: 0px; top: 50px;" >Approve</div>
+            <div id ="cancel" style="position: absolute; text-align: center; left: 120px; top: 50px;" >Cancel</div>
+
+        </form>
+
+
+    </div>
+
+
+<!--Foundation-->
+
+  <script>
+    $(document).foundation();
+  </script>
+
+</body>
+</html>
+
+

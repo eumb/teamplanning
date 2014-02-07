@@ -1,0 +1,52 @@
+
+
+
+
+
+<div class="xr_ap" id="xr_xri" style="left: 15%; top:140px;width: 1350px; height: 1000px; overflow:hidden;"> <!--content wraper-->
+
+ <span id="block1" class="xr_ar" style="left: 11px; top: 10px; width: 928px; height: 522px;">
+     <div id ="calendar" style="margin-top:15px;"></div>
+ </span><!--block1 -- calendar-->
+ <span id="block2" class="xr_ar" style="left: 950px; top: 10px; width: 391px; height: 270px;">
+
+
+ </span><!--block 1-->
+ <span id="block3" class="xr_ar" style="left: 950px; top: 290px; width: 391px; height: 241px;"></span><!--block 2-->
+ <span id="block4" class="xr_ar" style="left: 11px; top: 545px; width: 579px; height: 385px; "></span><!--block 3-->
+ <span id="block5" class="xr_ar" style="left: 600px; top: 545px; width: 740px; height: 385px; "></span><!--block 4-->
+
+
+
+
+
+<div class="row">
+    <div class="large-12 columns">
+ <div class="header" style="left:0px;top:0px">
+    <div id="menu" style="float:right ; margin-right:100px; margin-top:20px"> 
+    <i class="fa fa-bars fa-3x"></i>
+    </div>
+<div>
+    <span class= "title1" >TSCc-IPP-RO</span>
+    <span class=" title2">Call-out Rotation</span>
+</div>
+
+ </div>
+</div>
+</div>
+
+
+
+  var isResizingEvent = false;
+        $('#calendar').fullCalendar({
+            eventResizeStart: function () { isResizingEvent = true; },
+            eventResizeStop: function () { isResizingEvent = false; }
+        });
+
+        $(window).resize(function() {
+            if (isResizingEvent) { return; }
+            var viewportHeight =  $(window).height()
+            var viewportWidth = $(window).width()
+            $('#calendar').fullCalendar('option', 'contentHeight',  $(window).height());
+            $('#calendar').fullCalendar('option', 'contentWidth',  $(window).width());
+        });
